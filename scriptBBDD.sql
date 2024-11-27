@@ -7,6 +7,13 @@ CREATE TABLE categorias (
     descripcion VARCHAR(255)
 );
 
+CREATE TABLE usuarios (
+    usuario VARCHAR(15) PRIMARY KEY,
+    contraseña VARCHAR(255)
+);
+
+DROP TABLE usuarios;
+
 CREATE TABLE productos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50),
@@ -20,3 +27,4 @@ CREATE TABLE productos (
 
 SELECT * FROM categorias;
 SELECT * FROM productos;
+SELECT * FROM usuario;

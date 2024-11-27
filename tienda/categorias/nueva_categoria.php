@@ -28,9 +28,9 @@
             if($tmp_categoria == ""){
                 $err_categoria = "El nombre de la categoria es obligatoria";
             }else{
-                $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ]+$/";
-                if(strlen($tmp_categoria) > 30){
-                    $err_categoria = "El nombre de la categoria no puede tener mas de 30 caracteres";
+                $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ ]+$/";
+                if(strlen($tmp_categoria) > 30 && strlen($tmp_categoria) < 2){
+                    $err_categoria = "El nombre de la categoria debe tener entre 2 y 30 caracteres";
                 }else{
                     if(!preg_match($patron, $tmp_categoria)){
                         $err_categoria = "El nombre de la categoria debe contener solo numeros o letras";
@@ -43,7 +43,7 @@
             if($tmp_descripcion == ""){
                 $err_descripcion = "El nombre de la categoria es obligatoria";
             }else{
-                $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ]+$/";
+                $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ ]+$/";
                 if(strlen($tmp_descripcion) > 255){
                     $err_descripcion = "La descripcion de la categoria no puede tener mas de 255 caracteres";
                 }else{

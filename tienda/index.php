@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index de categorias</title>
+    <title>Index de Animes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <?php
         error_reporting( E_ALL );
@@ -22,7 +22,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Tabla de animes</h1>
+        <h1>Tabla de productos</h1>
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $id_anime = $_POST["id_anime"];
