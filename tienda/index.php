@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index de Animes</title>
+    <title>Index de la tienda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <?php
         error_reporting( E_ALL );
         ini_set("display_errors", 1 );    
 
-        require('../util/conexion.php');
+        require('util/conexion.php');
 
         session_start();
         if(isset($_SESSION["usuario"])){
             echo "<h1>Bienvenid@ $_SESSION[usuario]</h1>";
-        }else{
-            header("location: usuario/iniciar_sesion.php");
-            exit;
         }
     ?>
 </head>
@@ -25,14 +22,13 @@
         <h1>Tabla de productos</h1>
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
-                $id_anime = $_POST["id_anime"];
-                echo "<h1>$id_anime</h1>";
-                //  borrar el anime
-                $sql = "DELETE FROM animes WHERE id_anime = $id_anime";
+                $nombre = $_POST["nombre"];
+                echo "<h1>$nombre</h1>";
+                $sql = "DELETE FROM productos WHERE nombre = '$nombre'";
                 $_conexion -> query($sql);
             }
 
-            $sql = "SELECT * FROM animes";
+            $sql = "SELECT * FROM productos";
             $resultado = $_conexion -> query($sql);
             /**
              * Aplicamos la función query a la conexión, donde se ejecuta la sentencia SQL hecha
@@ -41,42 +37,53 @@
              * a los arrays
              */
         ?>
+        <?php if(isset($_SESSION["usuario"])){ ?>
         <a class="btn btn-warning" href="usuario/cerrar_sesion.php">Cerrar sesion</a><br><br>
-        <a class="btn btn-secondary" href="nuevo_anime.php">Crear nuevo anime</a><br><br>
+        <a class="btn btn-secondary" href="productos/nuevo_producto.php">Crear nuevo producto</a>
+        <a class="btn btn-secondary" href="categorias/nueva_categoria.php">Crear nueva categoria</a><br><br>
+        <?php }else{ ?>
+            <a class="btn btn-warning" href="usuario/iniciar_sesion.php">Iniciar sesion</a><br><br>
+            <?php } ?>
         <table class="table table-striped table-hover">
             <thead class="table-dark">
                 <tr>
-                    <th>Título</th>
-                    <th>Estudio</th>
-                    <th>Año</th>
-                    <th>Número de temporadas</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Categoria</th>
+                    <th>Stock</th>
+                    <th>Descripcion</th>
                     <th>Imagen</th>
+                    <?php if(isset($_SESSION["usuario"])){ ?>
                     <th></th>
                     <th></th>
+                    <?php } ?>
                 </tr>
             </thead>
             <tbody>
                 <?php
                     while($fila = $resultado -> fetch_assoc()) {    // trata el resultado como un array asociativo
                         echo "<tr>";
-                        echo "<td>" . $fila["titulo"] . "</td>";
-                        echo "<td>" . $fila["nombre_estudio"] . "</td>";
-                        echo "<td>" . $fila["anno_estreno"] . "</td>";
-                        echo "<td>" . $fila["num_temporadas"] . "</td>"; 
+                        echo "<td>" . $fila["nombre"] . "</td>";
+                        echo "<td>" . $fila["precio"] . "</td>";
+                        echo "<td>" . $fila["categoria"] . "</td>";
+                        echo "<td>" . $fila["stock"] . "</td>"; 
+                        echo "<td>" . $fila["descripcion"] . "</td>"; 
                         ?>
                         <td>
-                            <img width="200" height="200" src="<?php echo $fila["imagen"] ?>">
+                            <img width="250" height="200" src="imagenes/<?php echo $fila["imagen"] ?>">
                         </td>
+                        <?php if(isset($_SESSION["usuario"])){ ?>
                         <td>
                             <a class="btn btn-primary" 
-                               href="ver_anime.php?id_anime=<?php echo $fila["id_anime"] ?>">Editar</a>
+                               href="editar_producto.php?id_producto=<?php echo $fila["id"] ?>">Editar</a>
                         </td>
                         <td>
                             <form action="" method="post">
-                                <input type="hidden" name="id_anime" value="<?php echo $fila["id_anime"] ?>">
+                                <input type="hidden" name="nombre" value="<?php echo $fila["nombre"] ?>">
                                 <input class="btn btn-danger" type="submit" value="Borrar">
                             </form>
                         </td>
+                        <?php } ?>
                         <?php
                         echo "</tr>";
                     }

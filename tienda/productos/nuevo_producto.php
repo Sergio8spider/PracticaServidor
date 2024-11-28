@@ -10,7 +10,18 @@
         ini_set("display_errors", 1 );    
 
         require('../util/conexion.php');
+
+        session_start();
+        if (!isset($_SESSION["usuario"])) { 
+            header("location: ../usuario/iniciar_sesion.php");
+            exit;
+        }
     ?>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -19,14 +30,26 @@
         if($_SERVER["REQUEST_METHOD"] == "POST") {
             $tmp_nombre = $_POST["nombre"];
             $tmp_precio = $_POST["precio"];
-            $tmp_categoria = $_POST["categoria"];
+            if(isset($_POST["categoria"])) $tmp_categoria = $_POST["categoria"];
+            else $tmp_categoria="";
             $tmp_stock = $_POST["stock"];
             $tmp_descripcion = $_POST["descripcion"];
+            $tmp_imagen = $_FILES["imagen"]["name"];
+
+            $sql = "SELECT * FROM productos";
+            $resultado = $_conexion -> query($sql);
+            $nombres = [];
+
+            while($fila = $resultado -> fetch_assoc()) {
+                array_push($nombres, $fila["nombre"]);
+            }
 
             if($tmp_nombre == ""){
                 $err_nombre = "El nombre es obligatorio";
+            }else if(in_array($tmp_nombre,$nombres)){
+                $err_nombre = "Ese producto ya existe";
             }else{
-                $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
+                $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ: ]+$/";
                 if(strlen($tmp_nombre) > 50 || strlen($tmp_nombre) < 2){
                     $err_nombre = "El nombre debe tener entre 2 y 50 caracteres";
                 }else{
@@ -41,12 +64,17 @@
             if($tmp_precio == ""){
                 $err_precio = "El precio es obligatorio";
             }else{
-                $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
-                if(!preg_match($patron, $tmp_precio)){
-                    $err_precio = "El precio debe tener como maximo 4 numeros enteros y 2 decimales";
+                if(!is_numeric($tmp_precio)){
+                    $err_precio = "El precio debe ser un numero";
                 }else{
-                    $precio = $tmp_precio;
+                    $patron = "/^[0-9]{1,4}(\.[0-9]{1,2})?$/";
+                    if(!preg_match($patron, $tmp_precio)){
+                        $err_precio = "El precio debe tener como maximo 4 numeros enteros y 2 decimales";
+                    }else{
+                        $precio = $tmp_precio;
+                    }
                 }
+                
             } 
 
             $sql = "SELECT * FROM categorias ORDER BY categoria";
@@ -57,30 +85,66 @@
                 array_push($categorias, $fila["categoria"]);
             }
 
-            if($tmp_categoria = ""){
+            if($tmp_categoria == ""){
                 $err_categoria = "La categoria es obligatoria";
             }else{
                 if(!in_array($tmp_categoria,$categorias)){
                     $err_categoria="Esa categoria no existe";
                 }else{
-                    $categoria=$tmp_categoria;
+                    $categoria = $tmp_categoria;
                 }
             }
 
-            /**
-             * $_FILES -> que es un array BIDIMENSIONAL
-             */
-            //var_dump($_FILES["imagen"]);
-            $nombre_imagen = $_FILES["imagen"]["name"];
-            $ubicacion_temporal = $_FILES["imagen"]["tmp_name"];
-            $ubicacion_final = "./imagenes/$nombre_imagen";
+            if($tmp_stock == ""){
+                $stock = 0;
+            }else{
+                if(!filter_var($tmp_stock,FILTER_VALIDATE_INT)){
+                    $err_stock = "El stock tiene que ser un numero entero";
+                } else {
+                    if($tmp_stock < 0 || $tmp_stock > 2147483647){
+                        $err_stock = "El stock debe estar entre 0 y 2147483647";
+                    }else{
+                        $stock = $tmp_stock;
+                    } 
+                }
+            }
 
-            move_uploaded_file($ubicacion_temporal, $ubicacion_final);
+            if($tmp_descripcion == ""){
+                $err_descripcion="La descripcion es obligatoria";
+            }else{
+                $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
+                if(strlen($tmp_nombre) > 255){
+                    $err_nombre = "El nombre debe tener menos de 255 caracteres";
+                }else{
+                    if(!preg_match($patron, $tmp_descripcion)){
+                        $err_nombre = "La descripcion debe contener solo numeros o letras";
+                    }else{
+                        $descripcion = $tmp_descripcion;
+                    }
+                }
+            }
 
-            $sql = "INSERT INTO productos (nombre, precio, categoria, stock, imagen, descripcion) 
-                VALUES ('$nombre', '$precio', $categoria, $stock, '$ubicacion_final','$descripcion')";
+            if($tmp_imagen==""){
+                $err_imagen = "La imagen es obligatoria";
+            }else{
+                if(strlen($tmp_imagen) > 60){
+                    $err_imagen = "La ruta de la imagen debe tener menos de 60 caracteres";
+                } else {
+                    $nombre_imagen = $tmp_imagen;
+                    $ubicacion_temporal = $_FILES["imagen"]["tmp_name"];
+                    $ubicacion_final = "../imagenes/$nombre_imagen";
+                    move_uploaded_file($ubicacion_temporal, $ubicacion_final);
+                }
+            }
 
-            $_conexion -> query($sql);
+            if (isset($nombre) && isset($precio) && isset($categoria) && isset($nombre_imagen) && isset($descripcion)){
+                $sql = "INSERT INTO productos (nombre, precio, categoria, stock, imagen, descripcion) 
+                VALUES ('$nombre', $precio, '$categoria', $stock, '$nombre_imagen','$descripcion')";
+
+                $_conexion -> query($sql);
+            }else{
+            }
+
         }
 
         $sql = "SELECT * FROM categorias ORDER BY categoria";
@@ -96,10 +160,12 @@
             <div class="mb-3">
                 <label class="form-label">Nombre</label>
                 <input class="form-control" type="text" name="nombre">
+                <?php if(isset($err_nombre)) echo "<span class='error'>$err_nombre</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Precio</label>
                 <input class="form-control" type="text" name="precio">
+                <?php if(isset($err_precio)) echo "<span class='error'>$err_precio</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Categoria</label>
@@ -112,22 +178,26 @@
                         </option>
                     <?php } ?>
                 </select>
+                <?php if(isset($err_categoria)) echo "<span class='error'>$err_categoria</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Stock</label>
                 <input class="form-control" type="text" name="stock">
+                <?php if(isset($err_stock)) echo "<span class='error'>$err_stock</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Imagen</label>
                 <input class="form-control" type="file" name="imagen">
+                <?php if(isset($err_imagen)) echo "<span class='error'>$err_imagen</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Descripcion</label>
-                <input class="form-control" type="file" name="descripcion">
+                <textarea class="form-control" name="descripcion"></textarea>
+                <?php if(isset($err_descripcion)) echo "<span class='error'>$err_descripcion</span>" ?>
             </div>
             <div class="mb-3">
                 <input class="btn btn-primary" type="submit" value="Insertar">
-                <a class="btn btn-secondary" href="index.php">Volver</a>
+                <a class="btn btn-secondary" href="../">Volver</a>
             </div>
         </form>
     </div>

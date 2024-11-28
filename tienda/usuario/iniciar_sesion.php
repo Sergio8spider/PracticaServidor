@@ -11,6 +11,11 @@
 
         require('../util/conexion.php');
     ?>
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <?php
@@ -21,25 +26,32 @@
             $sql="SELECT * FROM usuarios WHERE usuario ='$usuario'";
             $resultado=$_conexion -> query($sql);
 
-            if($resultado -> num_rows == 0){
-                echo "<h2>El usuario $usuario no existe</h2>";
+            if($usuario == ""){
+                $err_usuario= "El usuario es obligatorio para iniciar sesion";
             }else{
-                $datos_usuario = $resultado -> fetch_assoc();
-                /**
-                 * Podemos acceder a:
-                 * 
-                 * $datos_usuario["usuario]
-                 * $datos_usuario["contraseña"]
-                 */
-                $acceso_concedido = password_verify($contraseña,$datos_usuario["contraseña"]);
-
-                if($acceso_concedido){
-                    session_start();
-                    $_SESSION["usuario"] = $usuario;
-                    header("location: ../index.php");
+                if($resultado -> num_rows == 0){
+                    $err_usuario= "El usuario $usuario no existe";
                 }else{
-                    echo "<h1>La contraseña no es correcta</h1>";
+                    $datos_usuario = $resultado -> fetch_assoc();
+                    /**
+                     * Podemos acceder a:
+                     * 
+                     * $datos_usuario["usuario]
+                     * $datos_usuario["contraseña"]
+                     */
+    
+                    if(password_verify($contraseña,$datos_usuario["contraseña"])){
+                        session_start();
+                        $_SESSION["usuario"] = $usuario;
+                        header("location: ../index.php");
+                    }else{
+                        $err_contraseña="La contraseña no es correcta";
+                    }      
                 }
+            }  
+
+            if($contraseña == ""){
+                $err_contraseña="La contraseña es obligatoria para iniciar sesion";
             }
         } 
     ?>
@@ -50,18 +62,22 @@
             <div class="mb-3">
                 <label class="form-label">Usuario</label>
                 <input class="form-control" type="text" name="usuario">
+                <?php if(isset($err_usuario)) echo "<span class='error'>$err_usuario</span>" ?>
             </div>
             <div class="mb-3">
                 <label class="form-label">Contraseña</label>
                 <input class="form-control" type="password" name="contraseña">
+                <?php if(isset($err_contraseña)) echo "<span class='error'>$err_contraseña</span>" ?>
             </div>
             <div class="mb-3">
                 <input class="btn btn-primary" type="submit" value="Iniciar sesion">
             </div>
             <div class="mb-3">
-                <h3>Si no tienes cuenta,</h3>
-                <a class="btn btn-secondary" href="registro.php">Registrarse
-                </a>
+                <h4>Si no tienes cuenta,</h4>
+                <a class="btn btn-secondary" href="registro.php">Registrarse</a>
+            </div>
+            <div class="mb-3">
+                <a class="btn btn-secondary" href="../">Ir a la pagina principal</a>
             </div>
         </form>
     </div>

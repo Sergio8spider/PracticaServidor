@@ -23,8 +23,18 @@
         $tmp_usuario = $_POST["usuario"];
         $tmp_contraseña = $_POST["contraseña"];
 
+        $sql = "SELECT * FROM usuarios";
+        $resultado = $_conexion -> query($sql);
+        $usuarios = [];
+
+        while($fila = $resultado -> fetch_assoc()) {
+            array_push($usuarios, $fila["usuario"]);
+        }
+
         if($tmp_usuario == ""){
             $err_usuario = "El usuario es obligatorio";
+        }else if(in_array($tmp_usuario,$usuarios)){
+            $err_usuario = "Ese usuario ya existe";
         }else{
             $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
             if(strlen($tmp_usuario) > 15 || strlen($tmp_usuario) < 3){
@@ -80,9 +90,12 @@
                 <input class="btn btn-primary" type="submit" value="Registrarse">
             </div>
             <div class="mb-3">
-                <h3>Si ya tienes cuenta,</h3>
+                <h4>Si ya tienes cuenta,</h4>
                 <a class="btn btn-secondary" href="iniciar_sesion.php">Iniciar sesion
                 </a>
+            </div>
+            <div class="mb-3">
+                <a class="btn btn-secondary" href="../">Ir a la pagina principal</a>
             </div>
         </form>
     </div>

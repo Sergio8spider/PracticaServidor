@@ -10,6 +10,12 @@
         ini_set("display_errors", 1 );    
 
         require('../util/conexion.php');
+
+        session_start();
+        if (!isset($_SESSION["usuario"])) { 
+            header("location: ../usuario/iniciar_sesion.php");
+            exit;
+        }
     ?>
     <style>
         .error {
@@ -25,8 +31,18 @@
             $tmp_categoria = $_POST["categoria"];
             $tmp_descripcion = $_POST["descripcion"];
 
+            $sql = "SELECT * FROM categorias";
+            $resultado = $_conexion -> query($sql);
+            $categorias = [];
+
+            while($fila = $resultado -> fetch_assoc()) {
+                array_push($categorias, $fila["categoria"]);
+            }
+
             if($tmp_categoria == ""){
                 $err_categoria = "El nombre de la categoria es obligatoria";
+            }else if(in_array($tmp_categoria,$categorias)){
+                $err_categoria = "Esa categoria ya existe";
             }else{
                 $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ ]+$/";
                 if(strlen($tmp_categoria) > 30 && strlen($tmp_categoria) < 2){
@@ -41,7 +57,7 @@
             }   
 
             if($tmp_descripcion == ""){
-                $err_descripcion = "El nombre de la categoria es obligatoria";
+                $err_descripcion = "La descripcion de la categoria es obligatoria";
             }else{
                 $patron = "/^[0-9A-Za-zñÑ()áéíóúÁÉÍÓÚ ]+$/";
                 if(strlen($tmp_descripcion) > 255){
@@ -77,7 +93,7 @@
             </div>
             <div class="mb-3">
                 <input class="btn btn-primary" type="submit" value="Crear">
-                <a class="btn btn-secondary" href="index.php">Volver</a>
+                <a class="btn btn-secondary" href="../">Volver</a>
             </div>
         </form>
     </div>

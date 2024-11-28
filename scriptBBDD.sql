@@ -27,4 +27,6 @@ CREATE TABLE productos (
 
 SELECT * FROM categorias;
 SELECT * FROM productos;
-SELECT * FROM usuario;
+SELECT * FROM usuarios;
+
+DELETE FROM productos WHERE categoria="Videojuegos";
