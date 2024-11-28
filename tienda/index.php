@@ -12,10 +12,14 @@
         require('util/conexion.php');
 
         session_start();
-        if(isset($_SESSION["usuario"])){
-            echo "<h1>Bienvenid@ $_SESSION[usuario]</h1>";
-        }
-    ?>
+        if (isset($_SESSION["usuario"])) { ?>
+            <h2>Bienvenid@ <?php echo $_SESSION["usuario"] ?> </h2>
+            <a class="btn btn-warning" href="../usuario/cerrar_sesion.php">Cerrar sesion</a>
+            <a class="btn btn-success" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
+        <?php } else {
+            header("location: ../usuario/iniciar_sesion.php");
+            exit;
+        } ?>
 </head>
 <body>
     <div class="container">
@@ -30,12 +34,6 @@
 
             $sql = "SELECT * FROM productos";
             $resultado = $_conexion -> query($sql);
-            /**
-             * Aplicamos la función query a la conexión, donde se ejecuta la sentencia SQL hecha
-             * 
-             * El resultado se almacena $resultado, que es un objeto con una estructura parecida
-             * a los arrays
-             */
         ?>
         <?php if(isset($_SESSION["usuario"])){ ?>
         <a class="btn btn-warning" href="usuario/cerrar_sesion.php">Cerrar sesion</a><br><br>
@@ -51,8 +49,8 @@
                     <th>Precio</th>
                     <th>Categoria</th>
                     <th>Stock</th>
-                    <th>Descripcion</th>
                     <th>Imagen</th>
+                    <th>Descripcion</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,12 +61,12 @@
                         echo "<td>" . $fila["precio"] . "</td>";
                         echo "<td>" . $fila["categoria"] . "</td>";
                         echo "<td>" . $fila["stock"] . "</td>"; 
-                        echo "<td>" . $fila["descripcion"] . "</td>"; 
                         ?>
                         <td>
                             <img width="250" height="200" src="imagenes/<?php echo $fila["imagen"] ?>">
                         </td>
                         <?php
+                        echo "<td>" . $fila["descripcion"] . "</td>"; 
                         echo "</tr>";
                     }
                 ?>

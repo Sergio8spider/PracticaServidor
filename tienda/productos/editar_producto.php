@@ -59,7 +59,7 @@
                 array_push($nombres, $fila["nombre"]);
             }
 
-            if(!$tmp_nombre == ""){
+            if($tmp_nombre != ""){
                 if(in_array($tmp_nombre,$nombres)){
                     $err_nombre = "Ese producto ya existe";
                 }else{
@@ -78,7 +78,7 @@
                 }
             } 
 
-            if(!$tmp_precio == ""){
+            if($tmp_precio != ""){
                 if(!is_numeric($tmp_precio)){
                     $err_precio = "El precio debe ser un numero";
                 }else{
@@ -101,7 +101,7 @@
                 array_push($categorias, $fila["categoria"]);
             }
 
-            if(!$tmp_categoria == ""){
+            if($tmp_categoria != ""){
                 if(!in_array($tmp_categoria,$categorias)){
                     $err_categoria="Esa categoria no existe";
                 }else{
@@ -111,7 +111,7 @@
                 }
             }
 
-            if(!$tmp_stock == ""){
+            if($tmp_stock != ""){
                 if(!filter_var($tmp_stock,FILTER_VALIDATE_INT)){
                     $err_stock = "El stock tiene que ser un numero entero";
                 } else {
@@ -125,7 +125,7 @@
                 }
             }
 
-            if(!$tmp_descripcion == ""){
+            if($tmp_descripcion != ""){
                 $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
                 if(strlen($tmp_descripcion) > 255){
                     $err_nombre = "La descripcion debe tener menos de 255 caracteres";
