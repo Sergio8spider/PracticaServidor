@@ -19,7 +19,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Tabla de productos</h1>
+        <h1>Tabla de la tienda</h1>
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $nombre = $_POST["nombre"];
@@ -39,8 +39,8 @@
         ?>
         <?php if(isset($_SESSION["usuario"])){ ?>
         <a class="btn btn-warning" href="usuario/cerrar_sesion.php">Cerrar sesion</a><br><br>
-        <a class="btn btn-secondary" href="productos/nuevo_producto.php">Crear nuevo producto</a>
-        <a class="btn btn-secondary" href="categorias/nueva_categoria.php">Crear nueva categoria</a><br><br>
+        <a class="btn btn-secondary" href="productos/">Ir a la tabla de productos</a>
+        <a class="btn btn-secondary" href="categorias/">Ir a la tabla de categorias</a><br><br>
         <?php }else{ ?>
             <a class="btn btn-warning" href="usuario/iniciar_sesion.php">Iniciar sesion</a><br><br>
             <?php } ?>
@@ -53,10 +53,6 @@
                     <th>Stock</th>
                     <th>Descripcion</th>
                     <th>Imagen</th>
-                    <?php if(isset($_SESSION["usuario"])){ ?>
-                    <th></th>
-                    <th></th>
-                    <?php } ?>
                 </tr>
             </thead>
             <tbody>
@@ -72,18 +68,6 @@
                         <td>
                             <img width="250" height="200" src="imagenes/<?php echo $fila["imagen"] ?>">
                         </td>
-                        <?php if(isset($_SESSION["usuario"])){ ?>
-                        <td>
-                            <a class="btn btn-primary" 
-                               href="editar_producto.php?id_producto=<?php echo $fila["id"] ?>">Editar</a>
-                        </td>
-                        <td>
-                            <form action="" method="post">
-                                <input type="hidden" name="nombre" value="<?php echo $fila["nombre"] ?>">
-                                <input class="btn btn-danger" type="submit" value="Borrar">
-                            </form>
-                        </td>
-                        <?php } ?>
                         <?php
                         echo "</tr>";
                     }
