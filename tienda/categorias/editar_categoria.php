@@ -152,41 +152,14 @@
         ?>
         <form class="col-6" action="" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label class="form-label">Nombre</label>
-                <input class="form-control" type="text" name="nombre">
-                <?php if(isset($err_nombre)) echo "<span class='error'>$err_nombre</span>" ?>
-                <?php if(isset($aviso_nombre)) echo "<span class='aviso'>$aviso_nombre</span>" ?>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Precio (maximo 4 numeros enteros y 2 decimales)</label>
-                <input class="form-control" type="text" name="precio">
-                <?php if(isset($err_precio)) echo "<span class='error'>$err_precio</span>" ?>
-                <?php if(isset($aviso_precio)) echo "<span class='aviso'>$aviso_precio</span>" ?>
-            </div>
-            <div class="mb-3">
                 <label class="form-label">Categoria</label>
-                <select class="form-select" name="categoria">
-                    <option value="" selected disabled hidden>--- Elige la categoria ---</option>
-                    <?php
-                    foreach($categorias as $categoria) { ?>
-                        <option value="<?php echo $categoria ?>">
-                            <?php echo $categoria ?>
-                        </option>
-                    <?php } ?>
-                </select>
+                <input class="form-control" type="text" name="nombre">
                 <?php if(isset($err_categoria)) echo "<span class='error'>$err_categoria</span>" ?>
                 <?php if(isset($aviso_categoria)) echo "<span class='aviso'>$aviso_categoria</span>" ?>
             </div>
             <div class="mb-3">
-                <label class="form-label">Stock</label>
-                <input class="form-control" type="text" name="stock">
-                <?php if(isset($err_stock)) echo "<span class='error'>$err_stock</span>" ?>
-                <?php if(isset($aviso_stock)) echo "<span class='aviso'>$aviso_stock</span>" ?>
-
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Descripcion</label>
-                <textarea class="form-control" name="descripcion"></textarea>
+                <label class="form-label">Precio (maximo 4 numeros enteros y 2 decimales)</label>
+                <input class="form-control" type="text" name="precio">
                 <?php if(isset($err_descripcion)) echo "<span class='error'>$err_descripcion</span>" ?>
                 <?php if(isset($aviso_descripcion)) echo "<span class='aviso'>$aviso_descripcion</span>" ?>
             </div>

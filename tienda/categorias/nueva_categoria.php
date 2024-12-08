@@ -21,6 +21,9 @@
         .error {
             color: red;
         }
+        .aviso {
+            color: green;
+        }
     </style>
 </head>
 <body>
@@ -76,6 +79,8 @@
                 VALUES ('$categoria', '$descripcion')";
 
                 $_conexion -> query($sql);
+
+                echo "<span class='aviso'>Categoria creada correctamente</span>";
             }   
         }
  

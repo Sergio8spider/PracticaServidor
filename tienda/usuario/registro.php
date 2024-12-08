@@ -49,7 +49,7 @@
         }  
         
         if($tmp_contraseña == ""){
-            $err_contraseña = "El usuario es obligatorio";
+            $err_contraseña = "La contraseña es obligatoria";
         }else{
             $patron = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/";
             if(strlen($tmp_contraseña) > 15 || strlen($tmp_contraseña) < 8){

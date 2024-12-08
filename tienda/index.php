@@ -14,12 +14,11 @@
         session_start();
         if (isset($_SESSION["usuario"])) { ?>
             <h2>Bienvenid@ <?php echo $_SESSION["usuario"] ?> </h2>
-            <a class="btn btn-warning" href="../usuario/cerrar_sesion.php">Cerrar sesion</a>
-            <a class="btn btn-success" href="../usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
-        <?php } else {
-            header("location: ../usuario/iniciar_sesion.php");
-            exit;
-        } ?>
+            <a class="btn btn-warning" href="usuario/cerrar_sesion.php">Cerrar sesion</a>
+            <a class="btn btn-success" href="usuario/cambiar_credenciales.php?usuario=<?php echo $_SESSION["usuario"] ?>">Cambiar credenciales</a>
+        <?php } else { ?>
+            <a class="btn btn-warning" href="usuario/iniciar_sesion.php">Iniciar sesion</a>
+        <?php } ?>
 </head>
 <body>
     <div class="container">
@@ -35,14 +34,13 @@
             $sql = "SELECT * FROM productos";
             $resultado = $_conexion -> query($sql);
         ?>
+
         <?php if(isset($_SESSION["usuario"])){ ?>
-        <a class="btn btn-warning" href="usuario/cerrar_sesion.php">Cerrar sesion</a><br><br>
-        <a class="btn btn-secondary" href="productos/">Ir a la tabla de productos</a>
-        <a class="btn btn-secondary" href="categorias/">Ir a la tabla de categorias</a><br><br>
-        <?php }else{ ?>
-            <a class="btn btn-warning" href="usuario/iniciar_sesion.php">Iniciar sesion</a><br><br>
-            <?php } ?>
-        <table class="table table-striped table-hover">
+            <a class="btn btn-outline-info" href="productos/">Ir a la tabla de productos</a>
+            <a class="btn btn-outline-info" href="categorias/">Ir a la tabla de categorias</a><br><br>
+        <?php } ?>
+
+        <table class="table table-striped table-hover table-info">
             <thead class="table-dark">
                 <tr>
                     <th>Nombre</th>

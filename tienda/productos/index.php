@@ -27,19 +27,12 @@
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $nombre = $_POST["nombre"];
-                echo "<h1>$nombre</h1>";
                 $sql = "DELETE FROM productos WHERE nombre = '$nombre'";
                 $_conexion -> query($sql);
             }
 
             $sql = "SELECT * FROM productos";
             $resultado = $_conexion -> query($sql);
-            /**
-             * Aplicamos la función query a la conexión, donde se ejecuta la sentencia SQL hecha
-             * 
-             * El resultado se almacena $resultado, que es un objeto con una estructura parecida
-             * a los arrays
-             */
         ?>
         <a class="btn btn-primary" href="nuevo_producto.php">Crear producto</a>
         <a class="btn btn-secondary" href="../">Volver a la pagina principal</a><br><br>
