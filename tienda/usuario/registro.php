@@ -19,60 +19,69 @@
 </head>
 <body>
     <?php
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-        $tmp_usuario = $_POST["usuario"];
-        $tmp_contraseña = $_POST["contraseña"];
-
-        $sql = "SELECT * FROM usuarios";
-        $resultado = $_conexion -> query($sql);
-        $usuarios = [];
-
-        while($fila = $resultado -> fetch_assoc()) {
-            array_push($usuarios, $fila["usuario"]);
-        }
-
-        if($tmp_usuario == ""){
-            $err_usuario = "El usuario es obligatorio";
-        }else if(in_array($tmp_usuario,$usuarios)){
-            $err_usuario = "Ese usuario ya existe";
-        }else{
-            $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
-            if(strlen($tmp_usuario) > 15 || strlen($tmp_usuario) < 3){
-                $err_usuario = "El nombre de la categoria debe tener entre 3 y 15 caracteres";
-            }else{
-                if(!preg_match($patron, $tmp_usuario)){
-                    $err_usuario = "El nombre de la categoria debe contener solo numeros o letras";
-                }else{
-                    $usuario = $tmp_usuario;
-                }
-            }
-        }  
-        
-        if($tmp_contraseña == ""){
-            $err_contraseña = "La contraseña es obligatoria";
-        }else{
-            $patron = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/";
-            if(strlen($tmp_contraseña) > 15 || strlen($tmp_contraseña) < 8){
-                $err_contraseña = "La contraseña debe tener entre 8 y 15 caracteres";
-            }else{
-                if(!preg_match($patron, $tmp_contraseña)){
-                    $err_contraseña = "La contraseña debe tener al menos una mayuscula, una minuscula y un numero. Puede tener caracteres especiales";
-                }else{
-                    $contraseña = $tmp_contraseña;
-                    $contraseña_cifrada = password_hash($contraseña,PASSWORD_DEFAULT);
-                }
-            }
-        }  
-        
-        if(isset($usuario) && isset($contraseña)){
-            $sql = "INSERT INTO usuarios VALUES ('$usuario','$contraseña_cifrada')";
-            $_conexion -> query($sql);
-        }
-
-        
-    } 
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
     ?>
     <div class="container">
+        <?php
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+            $tmp_usuario = depurar($_POST["usuario"]);
+            $tmp_contraseña = depurar($_POST["contraseña"]);
+
+            $sql = "SELECT * FROM usuarios";
+            $resultado = $_conexion -> query($sql);
+            $usuarios = [];
+
+            while($fila = $resultado -> fetch_assoc()) {
+                array_push($usuarios, $fila["usuario"]);
+            }
+
+            if($tmp_usuario == ""){
+                $err_usuario = "El usuario es obligatorio";
+            }else if(in_array($tmp_usuario,$usuarios)){
+                $err_usuario = "Ese usuario ya existe";
+            }else{
+                $patron = "/^[0-9A-Za-zñÑáéíóúÁÉÍÓÚ ]+$/";
+                if(strlen($tmp_usuario) > 15 || strlen($tmp_usuario) < 3){
+                    $err_usuario = "El nombre de la categoria debe tener entre 3 y 15 caracteres";
+                }else{
+                    if(!preg_match($patron, $tmp_usuario)){
+                        $err_usuario = "El nombre de la categoria debe contener solo numeros o letras";
+                    }else{
+                        $usuario = $tmp_usuario;
+                    }
+                }
+            }  
+            
+            if($tmp_contraseña == ""){
+                $err_contraseña = "La contraseña es obligatoria";
+            }else{
+                $patron = "/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/";
+                if(strlen($tmp_contraseña) > 15 || strlen($tmp_contraseña) < 8){
+                    $err_contraseña = "La contraseña debe tener entre 8 y 15 caracteres";
+                }else{
+                    if(!preg_match($patron, $tmp_contraseña)){
+                        $err_contraseña = "La contraseña debe tener al menos una mayuscula, una minuscula y un numero. Puede tener caracteres especiales";
+                    }else{
+                        $contraseña = $tmp_contraseña;
+                        $contraseña_cifrada = password_hash($contraseña,PASSWORD_DEFAULT);
+                    }
+                }
+            }  
+            
+            if(isset($usuario) && isset($contraseña)){
+                $sql = "INSERT INTO usuarios VALUES ('$usuario','$contraseña_cifrada')";
+                $_conexion -> query($sql);
+            }
+
+            
+        } 
+        ?>
         <h1>Registro</h1>
         
         <form class="col-6" action="" method="post" enctype="multipart/form-data">

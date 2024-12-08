@@ -19,43 +19,47 @@
 </head>
 <body>
     <?php
-    if($_SERVER["REQUEST_METHOD"] == "POST"){
-            $usuario = $_POST["usuario"];
-            $contraseña = $_POST["contraseña"]; 
-
-            $sql="SELECT * FROM usuarios WHERE usuario ='$usuario'";
-            $resultado=$_conexion -> query($sql);
-
-            if($usuario == ""){
-                $err_usuario= "El usuario es obligatorio para iniciar sesion";
-            }else{
-                if($resultado -> num_rows == 0){
-                    $err_usuario= "El usuario $usuario no existe";
-                }else{
-                    $datos_usuario = $resultado -> fetch_assoc();
-                    /**
-                     * Podemos acceder a:
-                     * 
-                     * $datos_usuario["usuario]
-                     * $datos_usuario["contraseña"]
-                     */
-    
-                    if(password_verify($contraseña,$datos_usuario["contraseña"])){
-                        session_start();
-                        $_SESSION["usuario"] = $usuario;
-                        header("location: ../index.php");
-                    }else{
-                        $err_contraseña="La contraseña no es correcta";
-                    }      
-                }
-            }  
-
-            if($contraseña == ""){
-                $err_contraseña="La contraseña es obligatoria para iniciar sesion";
-            }
-        } 
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
     ?>
+
     <div class="container">
+        <?php
+        if($_SERVER["REQUEST_METHOD"] == "POST"){
+                $usuario = $_POST["usuario"];
+                $contraseña = $_POST["contraseña"]; 
+
+                $sql="SELECT * FROM usuarios WHERE usuario ='$usuario'";
+                $resultado=$_conexion -> query($sql);
+
+                if($usuario == ""){
+                    $err_usuario= "El usuario es obligatorio para iniciar sesion";
+                }else{
+                    if($resultado -> num_rows == 0){
+                        $err_usuario= "El usuario $usuario no existe";
+                    }else{
+                        $datos_usuario = $resultado -> fetch_assoc();
+        
+                        if(password_verify($contraseña,$datos_usuario["contraseña"])){
+                            session_start();
+                            $_SESSION["usuario"] = $usuario;
+                            header("location: ../index.php");
+                        }else{
+                            $err_contraseña="La contraseña no es correcta";
+                        }      
+                    }
+                }  
+
+                if($contraseña == ""){
+                    $err_contraseña="La contraseña es obligatoria para iniciar sesion";
+                }
+            } 
+        ?>
         <h1>Iniciar sesion</h1>
         
         <form class="col-6" action="" method="post" enctype="multipart/form-data">

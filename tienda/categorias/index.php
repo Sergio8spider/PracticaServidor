@@ -20,6 +20,15 @@
             header("location: ../usuario/iniciar_sesion.php");
             exit;
         } ?>
+
+    <style>
+        .error {
+            color: red;
+        }
+        .aviso{
+            color:green;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -27,16 +36,26 @@
         <?php
             if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $categoria = $_POST["categoria"];
-                $sql = "DELETE FROM categorias WHERE categoria = '$categoria'";
-                $_conexion -> query($sql);
+                $sql="SELECT * FROM productos WHERE categoria ='$categoria'";
+                $resultado=$_conexion -> query($sql);
+    
+                if($resultado -> num_rows >= 1){
+                    $err_borrar = "No se puede borrar una categoria asociada a un producto";
+                } else {
+                    $sql = "DELETE FROM categorias WHERE categoria = '$categoria'";
+                    $_conexion -> query($sql);
+                    $aviso_borrar = "Categoria borrada correctamente";
+                }
             }
 
             $sql = "SELECT * FROM categorias";
             $resultado = $_conexion -> query($sql);
         ?>
-        <a class="btn btn-primary" href="nueva_categoria.php">Crear categoria</a>
-        <a class="btn btn-secondary" href="../">Volver a la pagina principal</a><br><br>
-        <table class="table table-striped table-hover">
+        <?php if(isset($err_borrar)) echo "<span class='error'>$err_borrar</span> <br><br>" ?>
+        <?php if(isset($aviso_borrar)) echo "<span class='aviso'>$aviso_borrar</span> <br><br>" ?>
+        <a class="btn btn-outline-info" href="nueva_categoria.php">Crear categoria</a>
+        <a class="btn btn-outline-secondary" href="../">Volver a la pagina principal</a><br><br>
+        <table class="table table-striped table-hover table-info">
             <thead class="table-dark">
                 <tr>
                     <th>Nombre</th>

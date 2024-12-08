@@ -20,6 +20,11 @@
             header("location: ../usuario/iniciar_sesion.php");
             exit;
         } ?>
+    <style>
+        .aviso{
+        color:green;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -29,14 +34,16 @@
                 $nombre = $_POST["nombre"];
                 $sql = "DELETE FROM productos WHERE nombre = '$nombre'";
                 $_conexion -> query($sql);
+                $aviso_borrar = "Producto borrado correctamente";
             }
 
             $sql = "SELECT * FROM productos";
             $resultado = $_conexion -> query($sql);
         ?>
-        <a class="btn btn-primary" href="nuevo_producto.php">Crear producto</a>
-        <a class="btn btn-secondary" href="../">Volver a la pagina principal</a><br><br>
-        <table class="table table-striped table-hover">
+        <?php if(isset($aviso_borrar)) echo "<span class='aviso'>$aviso_borrar</span> <br><br>" ?>
+        <a class="btn btn-outline-info" href="nuevo_producto.php">Crear producto</a>
+        <a class="btn btn-outline-secondary" href="../">Volver a la pagina principal</a><br><br>
+        <table class="table table-striped table-hover table-info">
             <thead class="table-dark">
                 <tr>
                     <th>Nombre</th>

@@ -27,12 +27,21 @@
     </style>
 </head>
 <body>
+    <?php
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
+    ?>
     <div class="container">
         <h1>Nueva categoria</h1>
         <?php
         if($_SERVER["REQUEST_METHOD"] == "POST") {
-            $tmp_categoria = $_POST["categoria"];
-            $tmp_descripcion = $_POST["descripcion"];
+            $tmp_categoria = depurar($_POST["categoria"]);
+            $tmp_descripcion = depurar($_POST["descripcion"]);
 
             $sql = "SELECT * FROM categorias";
             $resultado = $_conexion -> query($sql);
@@ -98,7 +107,7 @@
             </div>
             <div class="mb-3">
                 <input class="btn btn-primary" type="submit" value="Crear">
-                <a class="btn btn-secondary" href="../">Volver</a>
+                <a class="btn btn-secondary" href="index.php">Volver</a>
             </div>
         </form>
     </div>

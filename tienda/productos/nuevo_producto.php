@@ -27,16 +27,25 @@
     </style>
 </head>
 <body>
+    <?php
+    function depurar(string $entrada) : string {
+        $salida = htmlspecialchars($entrada);
+        $salida = trim($salida);
+        $salida = stripslashes($salida);
+        $salida = preg_replace('!\s+!', ' ', $salida);
+        return $salida;
+    }
+    ?>
     <div class="container">
         <h1>Nuevo producto</h1>
         <?php
         if($_SERVER["REQUEST_METHOD"] == "POST") {
-            $tmp_nombre = $_POST["nombre"];
-            $tmp_precio = $_POST["precio"];
-            if(isset($_POST["categoria"])) $tmp_categoria = $_POST["categoria"];
+            $tmp_nombre = depurar($_POST["nombre"]);
+            $tmp_precio = depurar($_POST["precio"]);
+            if(isset($_POST["categoria"])) $tmp_categoria = depurar($_POST["categoria"]);
             else $tmp_categoria="";
-            $tmp_stock = $_POST["stock"];
-            $tmp_descripcion = $_POST["descripcion"];
+            $tmp_stock = depurar($_POST["stock"]);
+            $tmp_descripcion = depurar($_POST["descripcion"]);
             $tmp_imagen = $_FILES["imagen"]["name"];
 
             $sql = "SELECT * FROM productos";
@@ -80,19 +89,20 @@
                 
             } 
 
-            $sql = "SELECT * FROM categorias ORDER BY categoria";
-            $resultado = $_conexion -> query($sql);
-            $categorias = [];
-
-            while($fila = $resultado -> fetch_assoc()) {
-                array_push($categorias, $fila["categoria"]);
-            }
-
             if($tmp_categoria == ""){
                 $err_categoria = "La categoria es obligatoria";
             }else{
+                $sql = "SELECT * FROM categorias ORDER BY categoria";
+                $resultado = $_conexion -> query($sql);
+                $categorias = [];
+
+                while($fila = $resultado -> fetch_assoc()) {
+                    array_push($categorias, $fila["categoria"]);
+                }
+
                 if(!in_array($tmp_categoria,$categorias)){
                     $err_categoria="Esa categoria no existe";
+                    var_dump($categorias);
                 }else{
                     $categoria = $tmp_categoria;
                 }
@@ -146,7 +156,7 @@
 
                 $_conexion -> query($sql);
 
-                echo "<span class='aviso'>Categoria creada correctamente</span>";
+                echo "<span class='aviso'>Producto creado correctamente</span>";
             }else{
             }
 
@@ -202,7 +212,7 @@
             </div>
             <div class="mb-3">
                 <input class="btn btn-primary" type="submit" value="Insertar">
-                <a class="btn btn-secondary" href="../">Volver</a>
+                <a class="btn btn-secondary" href="index.php">Volver</a>
             </div>
         </form>
     </div>
